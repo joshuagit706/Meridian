@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Actor {
+  id          String   @id @default(cuid())
+  address     String   @unique
+  role        String
+  name        String
+  contactInfo String?
+  kycStatus   String   @default("pending")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([role])
+  @@index([active])
+}
+
+model Batch {
+  id            String       @id @default(cuid())
+  chainId       BigInt       @unique
+  producerAddr  String
+  metadataHash  String
+  metadata      Json?
+  qrCodePath    String?
+  currentHolder String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  events        ChainEvent[]
+
+  @@index([producerAddr])
+  @@index([currentHolder])
+}
+
+model ChainEvent {
+  id             String   @id @default(cuid())
+  batchChainId   BigInt
+  batch          Batch    @relation(fields: [batchChainId], references: [chainId])
+  fromAddr       String
+  toAddr         String
+  location       String
+  docHash        String?
+  docIpfsCid     String?
+  docIpfsUrl     String?
+  txHash         String?
+  ledger         Int?
+  eventTimestamp DateTime
+  indexedAt      DateTime @default(now())
+
+  @@index([batchChainId])
+  @@index([fromAddr])
+  @@index([toAddr])
+  @@index([ledger])
+}
+
+model IndexerCheckpoint {
+  id        Int      @id @default(1)
+  ledger    Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model AuthChallenge {
+  id        String   @id @default(cuid())
+  address   String
+  challenge String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([address])
+  @@index([challenge])
+}
