@@ -1,14 +1,14 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  CheckCircle,
+  CheckCircle2,
   AlertCircle,
   Loader2,
   Package,
   User,
   Calendar,
   ExternalLink,
-  Shield,
+  ShieldCheck,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import * as api from '../services/api';
@@ -43,6 +43,16 @@ function MetadataItem({ label, value }: { label: string; value: string }) {
   );
 }
 
+function PageShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative min-h-screen bg-ink-950 pb-12 overflow-hidden">
+      <div className="absolute inset-0 bg-grid mask-radial pointer-events-none" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-stellar-700/25 blur-[120px] rounded-full pointer-events-none" />
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
 export function VerifyPage() {
   const { batchId } = useParams<{ batchId: string }>();
 
@@ -60,55 +70,68 @@ export function VerifyPage() {
 
   if (!batchId) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-gray-900">Invalid QR Code</h1>
-          <p className="text-gray-500 mt-2">No batch ID found in this URL.</p>
+      <PageShell>
+        <div className="min-h-screen flex items-center justify-center px-4">
+          <div className="text-center animate-fade-up">
+            <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <h1 className="text-xl font-semibold text-white">Invalid QR Code</h1>
+            <p className="text-slate-400 mt-2">No batch ID found in this URL.</p>
+          </div>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-stellar-600 animate-spin mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-gray-900">Verifying provenance…</h2>
-          <p className="text-gray-500 text-sm mt-1">
-            Fetching data from Stellar blockchain
-          </p>
+      <PageShell>
+        <div className="min-h-screen flex flex-col items-center justify-center px-4">
+          <div className="text-center animate-fade-up">
+            <div className="relative inline-flex mb-6">
+              <div className="absolute inset-0 bg-stellar-500/30 blur-2xl rounded-full" />
+              <Loader2 className="relative w-12 h-12 text-stellar-400 animate-spin" />
+            </div>
+            <h2 className="font-display text-xl font-semibold text-white">
+              Verifying provenance…
+            </h2>
+            <p className="text-slate-400 text-sm mt-2">
+              Fetching data from the Stellar blockchain
+            </p>
+          </div>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (isError || !batch) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
-        <div className="max-w-sm w-full">
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
-            <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-red-900">Batch Not Found</h2>
-            <p className="text-red-700 text-sm mt-2">
-              This QR code may be invalid, expired, or the batch has not been registered
-              yet.
-            </p>
-            {error instanceof Error && (
-              <p className="text-red-500 text-xs mt-3 font-mono bg-red-100 rounded-lg p-2">
-                {error.message}
+      <PageShell>
+        <div className="min-h-screen flex items-center justify-center px-4">
+          <div className="max-w-sm w-full animate-fade-up">
+            <div className="glass-strong rounded-3xl p-8 text-center">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-red-500/15 border border-red-400/25 mb-5">
+                <AlertCircle className="w-7 h-7 text-red-400" />
+              </div>
+              <h2 className="font-display text-xl font-bold text-white">Batch Not Found</h2>
+              <p className="text-slate-400 text-sm mt-3 leading-relaxed">
+                This QR code may be invalid, expired, or the batch has not been
+                registered yet.
               </p>
-            )}
-            <Link
-              to="/"
-              className="inline-block mt-4 text-sm font-medium text-red-700 underline hover:text-red-900"
-            >
-              Return to home
-            </Link>
+              {error instanceof Error && (
+                <p className="text-red-300/80 text-xs mt-4 font-mono bg-red-500/10 border border-red-400/15 rounded-xl p-3 break-words">
+                  {error.message}
+                </p>
+              )}
+              <Link
+                to="/"
+                className="inline-flex items-center justify-center gap-2 mt-6 px-5 py-3 rounded-2xl bg-stellar-600 hover:bg-stellar-500 text-white text-sm font-semibold transition-colors w-full"
+              >
+                Return to home
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
@@ -126,46 +149,46 @@ export function VerifyPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-stellar-900 to-slate-900 pb-12">
-      {/* Top verified banner */}
-      <div className="bg-gradient-to-r from-stellar-700 to-stellar-600 px-4 py-4 text-center">
+    <PageShell>
+      {/* Verified banner */}
+      <div className="px-4 pt-8 pb-2 text-center animate-fade-up">
         <a
           href={`${STELLAR_EXPLORER}/contract/${CONTRACT_ID}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white font-semibold px-5 py-2.5 rounded-full shadow-lg text-sm"
+          className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 hover:bg-emerald-500/25 transition-colors text-emerald-300 font-semibold px-5 py-2.5 rounded-full text-sm"
         >
-          <CheckCircle className="w-5 h-5" />
+          <CheckCircle2 className="w-5 h-5" />
           Verified on Stellar
-          <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+          <ExternalLink className="w-3.5 h-3.5 opacity-70" />
         </a>
-        <p className="text-stellar-200 text-xs mt-2">
+        <p className="text-slate-500 text-xs mt-3">
           Immutable record — contract verified on Stellar testnet
         </p>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 pt-6 space-y-5">
+      <div className="max-w-lg mx-auto px-4 pt-5 space-y-5">
         {/* Product hero card */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="h-2 bg-gradient-to-r from-stellar-600 to-emerald-500" />
-          <div className="p-5">
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up-delay-1">
+          <div className="h-1.5 bg-gradient-to-r from-stellar-600 to-emerald-500" />
+          <div className="p-6">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-stellar-50 flex items-center justify-center">
+              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-stellar-50 flex items-center justify-center">
                 <Package className="w-7 h-7 text-stellar-600" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl font-bold text-gray-900 leading-tight">
+                <h1 className="font-display text-xl font-bold text-gray-900 leading-tight">
                   {productName}
                 </h1>
-                <p className="text-xs text-gray-500 font-mono mt-1 break-all">
+                <p className="text-xs text-gray-500 font-mono mt-1.5 break-all">
                   Batch: {batch.chainId}
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-3">
+            <div className="mt-5 grid grid-cols-1 gap-3">
               {/* Producer */}
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-3 p-3.5 bg-gray-50 rounded-2xl">
                 <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-500">Producer</p>
@@ -181,7 +204,7 @@ export function VerifyPage() {
               </div>
 
               {/* Registered date */}
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-3 p-3.5 bg-gray-50 rounded-2xl">
                 <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <div>
                   <p className="text-xs text-gray-500">Registered</p>
@@ -196,14 +219,14 @@ export function VerifyPage() {
 
         {/* Metadata section */}
         {metadataEntries.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <div className="px-5 pt-5 pb-1">
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden animate-fade-up-delay-2">
+            <div className="px-6 pt-6 pb-1">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-stellar-600" />
+                <ShieldCheck className="w-4 h-4 text-stellar-600" />
                 Product Details
               </h2>
             </div>
-            <dl className="px-5 pb-4">
+            <dl className="px-6 pb-5">
               {metadataEntries.map(([key, val]) => (
                 <MetadataItem
                   key={key}
@@ -216,10 +239,10 @@ export function VerifyPage() {
         )}
 
         {/* Chain of Custody */}
-        <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-          <div className="px-5 pt-5 pb-4">
-            <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-emerald-500" />
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden animate-fade-up-delay-3">
+          <div className="px-6 pt-6 pb-5">
+            <h2 className="text-base font-bold text-gray-900 mb-5 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               Chain of Custody
               <span className="ml-auto text-xs font-normal text-gray-500">
                 {batch.events.length + 1} step{batch.events.length !== 0 ? 's' : ''}
@@ -234,14 +257,13 @@ export function VerifyPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center pb-4">
-          <p className="text-slate-400 text-xs">
-            Scan powered by{' '}
-            <span className="font-semibold text-stellar-400">Lineage</span> ·
-            Stellar Blockchain
-          </p>
+        <div className="text-center pb-4 pt-2">
+          <Link to="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-300 text-xs transition-colors">
+            <img src="/logo.svg" alt="" className="w-4 h-4 rounded" />
+            Powered by <span className="font-semibold text-stellar-400">Lineage</span> · Stellar Blockchain
+          </Link>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

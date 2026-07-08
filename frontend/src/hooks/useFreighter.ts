@@ -9,13 +9,13 @@ export function useFreighter() {
 
   useEffect(() => {
     import('@stellar/freighter-api')
-      .then(({ isConnected, getPublicKey }) => {
+      .then(({ isConnected, getAddress }) => {
         setFreighterAvailable(true);
         isConnected().then(({ isConnected: ok }) => {
           if (ok) {
-            getPublicKey().then(({ publicKey: pk, error: err }) => {
-              if (pk && !err) {
-                setPublicKey(pk);
+            getAddress().then(({ address, error: err }) => {
+              if (address && !err) {
+                setPublicKey(address);
                 setConnected(true);
               }
             });
@@ -32,10 +32,10 @@ export function useFreighter() {
     setError(null);
     try {
       const { requestAccess } = await import('@stellar/freighter-api');
-      const { publicKey: pk, error: err } = await requestAccess();
-      if (err) throw new Error(err);
-      if (!pk) throw new Error('No public key returned');
-      setPublicKey(pk);
+      const { address, error: err } = await requestAccess();
+      if (err) throw new Error(err.message);
+      if (!address) throw new Error('No public key returned');
+      setPublicKey(address);
       setConnected(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to connect wallet');
@@ -50,7 +50,7 @@ export function useFreighter() {
       const { signedTxXdr, error: err } = await signTransaction(txXdr, {
         networkPassphrase,
       });
-      if (err) throw new Error(err);
+      if (err) throw new Error(err.message);
       if (!signedTxXdr) throw new Error('No signed transaction returned');
       return signedTxXdr;
     },

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Shield, Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
+import { Logo } from '../Logo';
 import { useAuth } from '../../context/AuthContext';
 import { useFreighter } from '../../hooks/useFreighter';
 import { Badge } from '../Badge';
@@ -27,7 +28,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-200/80 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -35,8 +36,8 @@ export function Navbar() {
             to="/"
             className="flex items-center gap-2.5 font-bold text-gray-900 hover:text-stellar-600 transition-colors"
           >
-            <Shield className="w-6 h-6 text-stellar-600" />
-            <span className="text-lg tracking-tight">Lineage</span>
+            <Logo className="w-7 h-7" />
+            <span className="font-display text-lg tracking-tight">Lineage</span>
           </Link>
 
           {/* Desktop nav */}

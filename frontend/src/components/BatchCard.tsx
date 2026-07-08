@@ -34,7 +34,7 @@ export function BatchCard({ batch, onTransfer, onView }: BatchCardProps) {
     batch.producer?.name ?? truncateAddr(batch.currentHolder);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-stellar-600 to-stellar-500" />
 

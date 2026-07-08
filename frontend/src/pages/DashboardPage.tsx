@@ -11,7 +11,6 @@ import {
   AlertCircle,
   CheckCircle,
   Upload,
-  Download,
   X,
   RefreshCw,
 } from 'lucide-react';
@@ -20,6 +19,7 @@ import { useAuth } from '../context/AuthContext';
 import { useFreighter } from '../hooks/useFreighter';
 import * as api from '../services/api';
 import { BatchCard } from '../components/BatchCard';
+import { BatchQRCode } from '../components/BatchQRCode';
 import { Badge } from '../components/Badge';
 import { Layout } from '../components/layout/Layout';
 import type { Batch, Actor, Role } from '../types';
@@ -211,10 +211,6 @@ function RegisterBatchTab() {
   }
 
   if (status === 'done' && createdBatch) {
-    const qrUrl = createdBatch.qrCodePath
-      ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${createdBatch.qrCodePath}`
-      : null;
-
     return (
       <div className="max-w-md mx-auto">
         <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center">
@@ -230,23 +226,14 @@ function RegisterBatchTab() {
             </p>
           </div>
 
-          {qrUrl && (
-            <div className="mt-4">
-              <img
-                src={qrUrl}
-                alt="QR Code"
-                className="w-40 h-40 mx-auto rounded-xl border border-emerald-200 bg-white p-2"
-              />
-              <a
-                href={qrUrl}
-                download={`qr-${createdBatch.chainId}.png`}
-                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-stellar-600 text-white text-sm font-medium rounded-xl hover:bg-stellar-700 transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                Download QR Code
-              </a>
-            </div>
-          )}
+          {/* QR code is generated in-browser from the batch's on-chain ID —
+              it encodes the public /verify/{id} URL. */}
+          <div className="mt-5">
+            <BatchQRCode batchId={createdBatch.chainId} size={176} />
+            <p className="text-xs text-emerald-700/70 mt-3">
+              Print this on the packaging. Anyone can scan it to verify provenance.
+            </p>
+          </div>
 
           <button
             onClick={reset}

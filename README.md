@@ -1,4 +1,8 @@
-# Lineage
+<p align="center">
+  <img src="frontend/public/logo.svg" alt="Lineage logo" width="110" />
+</p>
+
+<h1 align="center">Lineage</h1>
 
 **Lineage** is a supply chain provenance and anti-counterfeiting platform built on the Stellar blockchain. Producers, processors, distributors, and retailers log every custody handoff on-chain. Consumers scan a QR code on physical packaging to see the complete, tamper-proof history of a product — no account required.
 

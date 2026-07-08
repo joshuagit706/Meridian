@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, AlertCircle, CheckCircle, Loader2, Wallet, ExternalLink } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle2,
+  ExternalLink,
+  Loader2,
+  ScanLine,
+  ShieldCheck,
+  Wallet,
+} from 'lucide-react';
 import { useFreighter } from '../hooks/useFreighter';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/api';
@@ -108,141 +117,147 @@ export function LoginPage() {
   const isBusy = ['connecting', 'fetching-challenge', 'signing', 'verifying'].includes(step);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-stellar-900 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-stellar-600 shadow-lg mb-4">
-            <Shield className="w-8 h-8 text-white" />
+    <div className="relative min-h-screen bg-ink-950 flex items-center justify-center px-4 py-12 overflow-hidden">
+      {/* Background layers */}
+      <div className="absolute inset-0 bg-grid mask-radial pointer-events-none" />
+      <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-stellar-700/30 blur-[130px] rounded-full pointer-events-none" />
+
+      <div className="relative w-full max-w-md animate-fade-up">
+        {/* Back link */}
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm mb-8 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to home
+        </Link>
+
+        {/* Logo lockup */}
+        <div className="flex items-center gap-3 mb-8">
+          <img src="/logo.svg" alt="" className="w-11 h-11 rounded-xl shadow-glow" />
+          <div>
+            <h1 className="font-display text-2xl font-bold text-white tracking-tight">Lineage</h1>
+            <p className="text-slate-500 text-sm">Actor sign-in</p>
           </div>
-          <h1 className="text-3xl font-bold text-white">Lineage</h1>
-          <p className="text-stellar-300 mt-2 text-sm">
-            Sign in with your Stellar wallet to access the actor dashboard
-          </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-stellar-600 to-stellar-500" />
-          <div className="p-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Sign In</h2>
-            <p className="text-gray-500 text-sm mb-6">
-              Connect your Freighter wallet to authenticate via Stellar signature.
-            </p>
+        <div className="glass-strong rounded-3xl p-8 shadow-inner-light">
+          <h2 className="text-white font-semibold text-lg mb-1.5">Connect your wallet</h2>
+          <p className="text-slate-400 text-sm mb-7 leading-relaxed">
+            Authenticate with an Ed25519 signature from your Freighter wallet. No
+            password, nothing stored.
+          </p>
 
-            {/* Freighter not available */}
-            {freighterAvailable === false && (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                <div className="flex gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-yellow-800">
-                      Freighter not detected
-                    </p>
-                    <p className="text-xs text-yellow-700 mt-1">
-                      Install the Freighter browser extension to continue.
-                    </p>
-                    <a
-                      href="https://freighter.app"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-yellow-800 underline hover:text-yellow-900"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      Install Freighter
-                    </a>
-                  </div>
+          {/* Freighter not available */}
+          {freighterAvailable === false && (
+            <div className="mb-5 p-4 rounded-2xl bg-amber-500/10 border border-amber-400/20">
+              <div className="flex gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-200">Freighter not detected</p>
+                  <p className="text-xs text-amber-200/70 mt-1">
+                    Install the Freighter browser extension to continue.
+                  </p>
+                  <a
+                    href="https://freighter.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-2.5 text-xs font-medium text-amber-300 hover:text-amber-200 underline underline-offset-2"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    Install Freighter
+                  </a>
                 </div>
-              </div>
-            )}
-
-            {/* Connected address */}
-            {connected && publicKey && (
-              <div className="mb-5 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-xs text-emerald-700 font-medium">Wallet connected</p>
-                    <p className="font-mono text-sm text-emerald-900 truncate mt-0.5">
-                      {truncateAddr(publicKey)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Error */}
-            {errorMsg && step === 'error' && (
-              <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl">
-                <div className="flex gap-2.5">
-                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-red-800">Authentication error</p>
-                    <p className="text-xs text-red-600 mt-1">{errorMsg}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step status */}
-            {isBusy && (
-              <div className="mb-5 p-3 bg-stellar-50 border border-stellar-200 rounded-xl flex items-center gap-3">
-                <Loader2 className="w-5 h-5 text-stellar-600 animate-spin flex-shrink-0" />
-                <p className="text-sm text-stellar-800 font-medium">{stepLabel[step]}</p>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="space-y-3">
-              {!connected ? (
-                <button
-                  onClick={connect}
-                  disabled={freighterLoading || freighterAvailable === false || freighterAvailable === null}
-                  className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-stellar-600 hover:bg-stellar-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
-                >
-                  {freighterLoading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Wallet className="w-5 h-5" />
-                  )}
-                  {freighterLoading ? 'Connecting…' : 'Connect Freighter Wallet'}
-                </button>
-              ) : (
-                <button
-                  onClick={handleAuth}
-                  disabled={isBusy}
-                  className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-stellar-600 hover:bg-stellar-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
-                >
-                  {isBusy ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Shield className="w-5 h-5" />
-                  )}
-                  {isBusy ? stepLabel[step] : 'Authenticate with Stellar Signature'}
-                </button>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs text-gray-400">or</span>
               </div>
             </div>
+          )}
 
-            <Link
-              to="/verify/demo"
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors text-sm"
+          {/* Connected address */}
+          {connected && publicKey && (
+            <div className="mb-5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-400/20">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs text-emerald-300/80 font-medium">Wallet connected</p>
+                  <p className="font-mono text-sm text-emerald-200 truncate mt-0.5">
+                    {truncateAddr(publicKey)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error */}
+          {errorMsg && step === 'error' && (
+            <div className="mb-5 p-4 rounded-2xl bg-red-500/10 border border-red-400/20">
+              <div className="flex gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-red-300">Authentication error</p>
+                  <p className="text-xs text-red-300/70 mt-1">{errorMsg}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step status */}
+          {isBusy && (
+            <div className="mb-5 p-4 rounded-2xl bg-stellar-500/10 border border-stellar-400/20 flex items-center gap-3">
+              <Loader2 className="w-5 h-5 text-stellar-400 animate-spin flex-shrink-0" />
+              <p className="text-sm text-stellar-200 font-medium">{stepLabel[step]}</p>
+            </div>
+          )}
+
+          {/* Actions */}
+          {!connected ? (
+            <button
+              onClick={connect}
+              disabled={freighterLoading || freighterAvailable === false || freighterAvailable === null}
+              className="w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-2xl bg-stellar-600 hover:bg-stellar-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-all text-sm shadow-glow hover:shadow-glow-lg"
             >
-              Scan a product QR code
-            </Link>
+              {freighterLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Wallet className="w-5 h-5" />
+              )}
+              {freighterLoading ? 'Connecting…' : 'Connect Freighter Wallet'}
+            </button>
+          ) : (
+            <button
+              onClick={handleAuth}
+              disabled={isBusy}
+              className="w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-2xl bg-stellar-600 hover:bg-stellar-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-all text-sm shadow-glow hover:shadow-glow-lg"
+            >
+              {isBusy ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <ShieldCheck className="w-5 h-5" />
+              )}
+              {isBusy ? stepLabel[step] : 'Authenticate with Stellar Signature'}
+            </button>
+          )}
+
+          {/* Divider */}
+          <div className="relative my-7">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/[0.08]" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-[#101828] px-3 text-xs text-slate-500 rounded">or</span>
+            </div>
           </div>
+
+          <Link
+            to="/verify/demo"
+            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl glass hover:bg-white/[0.08] text-slate-200 font-medium transition-colors text-sm"
+          >
+            <ScanLine className="w-4 h-4" />
+            Scan a product QR code
+          </Link>
         </div>
 
-        <p className="text-center text-stellar-400 text-xs mt-6">
+        <p className="text-center text-slate-600 text-xs mt-7">
           No account needed · Wallet signatures never leave your device
         </p>
       </div>

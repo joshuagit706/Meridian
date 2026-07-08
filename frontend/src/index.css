@@ -7,6 +7,7 @@
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -16,9 +17,45 @@
   * {
     box-sizing: border-box;
   }
+
+  ::selection {
+    @apply bg-stellar-600 text-white;
+  }
 }
 
 @layer utilities {
+  /* Frosted glass surface for dark backgrounds */
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-xl border border-white/[0.08];
+  }
+
+  .glass-strong {
+    @apply bg-white/[0.07] backdrop-blur-2xl border border-white/[0.12];
+  }
+
+  /* Gradient headline text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-stellar-300;
+  }
+
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-stellar-400 to-stellar-200;
+  }
+
+  /* Faint blueprint grid for hero backgrounds */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Radial mask so the grid fades toward the edges */
+  .mask-radial {
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, black 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, black 40%, transparent 100%);
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;

@@ -1,5 +1,6 @@
+import { Link } from 'react-router-dom';
 import { Navbar } from './Navbar';
-import { Shield } from 'lucide-react';
+import { Logo } from '../Logo';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,14 +13,15 @@ export function Layout({ children, showFooter = true }: LayoutProps) {
       <Navbar />
       <main className="flex-1">{children}</main>
       {showFooter && (
-        <footer className="border-t border-gray-200 bg-white py-6 mt-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Shield className="w-4 h-4 text-stellar-600" />
-              <span>Lineage — Verified provenance on Stellar</span>
-            </div>
-            <p className="text-xs text-gray-400">
-              Built on the Stellar blockchain · Testnet
+        <footer className="border-t border-gray-200 bg-white py-8 mt-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Link to="/" className="flex items-center gap-2.5 text-gray-600 text-sm hover:text-gray-900 transition-colors">
+              <Logo className="w-5 h-5" />
+              <span className="font-display font-semibold tracking-tight">Lineage</span>
+              <span className="text-gray-400">— verified provenance on Stellar</span>
+            </Link>
+            <p className="text-xs text-gray-400 font-mono">
+              soroban · ipfs · ed25519 · testnet
             </p>
           </div>
         </footer>

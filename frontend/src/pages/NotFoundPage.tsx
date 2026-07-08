@@ -1,44 +1,43 @@
 import { Link } from 'react-router-dom';
-import { AlertCircle, Home, Package } from 'lucide-react';
-import { Layout } from '../components/layout/Layout';
+import { ArrowLeft, ScanLine } from 'lucide-react';
 
 export function NotFoundPage() {
   return (
-    <Layout>
-      <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <div className="relative inline-block mb-6">
-            <Package className="w-24 h-24 text-gray-200" />
-            <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-red-500" />
-            </div>
-          </div>
+    <div className="relative min-h-screen bg-ink-950 flex items-center justify-center px-4 overflow-hidden">
+      <div className="absolute inset-0 bg-grid mask-radial pointer-events-none" />
+      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-stellar-700/25 blur-[120px] rounded-full pointer-events-none" />
 
-          <h1 className="text-5xl font-black text-gray-900 mb-2">404</h1>
-          <h2 className="text-xl font-bold text-gray-700 mb-3">Page Not Found</h2>
-          <p className="text-gray-500 text-sm mb-8">
-            This page doesn't exist or has been moved. If you scanned a QR code, make
-            sure the URL is correct.
-          </p>
+      <div className="relative text-center max-w-md animate-fade-up">
+        <img src="/logo.svg" alt="" className="w-12 h-12 rounded-xl mx-auto mb-8 shadow-glow" />
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-stellar-600 text-white text-sm font-semibold rounded-xl hover:bg-stellar-700 transition-colors"
-            >
-              <Home className="w-4 h-4" />
-              Back to Home
-            </Link>
-            <Link
-              to="/dashboard/batches"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 border border-gray-300 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors"
-            >
-              <Package className="w-4 h-4" />
-              Go to Dashboard
-            </Link>
-          </div>
+        <p className="font-display text-[7rem] leading-none font-bold text-white/[0.06] select-none">
+          404
+        </p>
+        <h1 className="font-display text-2xl font-bold text-white -mt-10">
+          This trail goes cold.
+        </h1>
+        <p className="text-slate-400 text-sm mt-4 mb-10 leading-relaxed">
+          The page you're looking for doesn't exist or has been moved. If you
+          scanned a QR code, double-check the URL on the packaging.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-stellar-600 hover:bg-stellar-500 text-white text-sm font-semibold transition-all shadow-glow"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+          <Link
+            to="/verify/demo"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl glass hover:bg-white/[0.08] text-slate-200 text-sm font-semibold transition-colors"
+          >
+            <ScanLine className="w-4 h-4" />
+            Verify a Product
+          </Link>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }
